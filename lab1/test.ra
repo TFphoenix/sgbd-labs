@@ -1,0 +1,19 @@
+/*Ex 7*/
+\project_{age} (
+    \select_{pizza = 'mushroom'} Eats
+    \join Person
+)
+\diff
+\project_{age1} (
+    \select_{age1 < age2} (
+        \rename_{age1} \project_{age} (
+            \select_{pizza = 'mushroom'} Eats
+            \join Person
+        )
+        \cross
+        \rename_{age2} \project_{age} (
+            \select_{pizza = 'mushroom'} Eats
+            \join Person
+        )
+    )
+);

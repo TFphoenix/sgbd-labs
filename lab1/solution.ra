@@ -1,0 +1,127 @@
+/*Ex 1*/
+\project_{pizza}(
+    (\select_{gender='female' and age>20} Person)
+    \join Eats
+);
+
+/*Ex 2*/
+\project_{name}(
+    (\select_{gender='female'} Person)
+    \join (\select_{pizzeria='Straw Hat'} Serves
+    \join Eats)
+);
+
+/*Ex 3*/
+\project_{pizzeria}(
+    (\select_{price<10} Serves)
+    \join (\select_{name='Amy' or name='Fay'} Eats)
+);
+
+/*Ex 4*/
+\project_{pizzeria}(
+    \select_{price<10} Serves
+    \join (
+        \project_{pizza}(
+            \select_{name='Amy'} Eats
+            \join (\project_{pizza}(\select_{name='Fay'} Eats))
+        )
+    )
+);
+
+/*Ex 5*/
+\project_{name} (
+    \select_{pizzeria='Dominos'} Serves
+    \join Eats
+)
+\diff
+\project_{name} (
+    \select_{pizzeria='Dominos'} Frequents
+);
+
+/*Ex 6*/
+\project_{pizza} Serves
+\diff
+\project_{pizza} (
+    (\project_{pizza} Serves 
+    \cross
+    \project_{pizzeria} Serves)
+    \diff
+    (\project_{pizza, pizzeria} \select_{price < 10} Serves)
+)
+\union (
+    \project_{pizza} (
+        \select_{age<24} (
+            Eats
+            \join Person
+        )
+    )
+    \diff
+    \project_{pizza} (
+        \select_{age>=24} (
+            Eats
+            \join Person
+        )
+    )
+);
+
+/*Ex 7*/
+\project_{age} (
+    \select_{pizza = 'mushroom'} Eats
+    \join Person
+)
+\diff
+\project_{age1} (
+    \select_{age1 < age2} (
+        \rename_{age1} \project_{age} (
+            \select_{pizza = 'mushroom'} Eats
+            \join Person
+        )
+        \cross
+        \rename_{age2} \project_{age} (
+            \select_{pizza = 'mushroom'} Eats
+            \join Person
+        )
+    )
+);
+
+/*Ex 8*/
+\project_{pizzeria} (
+    \select_{age > 30} Person
+    \join Eats
+    \join Serves
+)
+\diff
+\project_{pizzeria} (
+    \rename_{pizzeria, pizza_serv, price} Serves
+    \join_{pizza_serv = pizza} (
+        \project_{pizza} Eats
+        \diff
+        \project_{pizza}(
+            \select_{age > 30} Person
+            \join Eats
+        )
+    )
+);
+
+/*Ex 9*/
+\project_{pizzeria} Serves
+\diff (
+    \project_{pizzeria} (
+        \project_{pizzeria} Serves
+        \cross (
+            \project_{pizza} (
+                \select_{age>'30'} Person
+                \join Eats
+            )
+        )
+        \diff (
+            \project_{pizzeria,pizza} (
+                (
+                    \select_{age>'30'} Person
+                    \join Eats
+                )
+                \join Serves
+            )
+        )
+    )
+);
